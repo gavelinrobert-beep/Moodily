@@ -74,7 +74,7 @@ export default function PrivacyPage() {
             <ul className="list-disc pl-6 space-y-2">
               <li>Access all your data at any time through the dashboard</li>
               <li>Delete specific entries or your entire account</li>
-              <li>Export your data (available through settings)</li>
+              <li>Export your data in CSV or JSON format (available in Settings)</li>
               <li>Opt out of reminder emails</li>
             </ul>
           </section>
