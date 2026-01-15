@@ -1,6 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
-import { getUserTimezone } from '@/lib/utils/date'
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url)
@@ -13,11 +12,12 @@ export async function GET(request: Request) {
     
     if (!error) {
       // Create profile if it doesn't exist
+      // Timezone will be updated on first client-side render
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
         await supabase.from('profiles').upsert({
           user_id: user.id,
-          timezone: getUserTimezone(),
+          timezone: 'UTC', // Default to UTC; will be updated client-side
           notification_pref: 'email',
         }, {
           onConflict: 'user_id',

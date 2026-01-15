@@ -9,6 +9,16 @@ This guide will help you set up Moodily from scratch.
 - A Supabase account (free tier works fine)
 - (Optional) A Vercel account for deployment
 
+## Important Notes
+
+### Known Limitations
+
+1. **Streak Calculation**: The streak view uses UTC dates. Users in different timezones may experience streaks breaking at unexpected times. For production, consider implementing timezone-aware streak calculation on the client side or in a custom SQL function.
+
+2. **Account Deletion**: The current implementation deletes user data (entries and profiles) but does not delete the auth user itself (requires service role key). You may want to implement an admin API endpoint for complete account deletion.
+
+3. **Email Reminders**: The Edge Function logs emails but doesn't actually send them. You need to integrate with an email service (SendGrid, Resend, etc.) for production use.
+
 ## Step 1: Clone and Install
 
 ```bash

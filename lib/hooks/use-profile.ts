@@ -67,14 +67,16 @@ export function useDeleteAccount() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Not authenticated')
 
-      // Delete all user data
+      // Delete all user data from profiles and entries tables
+      // RLS policies ensure users can only delete their own data
       await Promise.all([
         supabase.from('entries').delete().eq('user_id', user.id),
         supabase.from('profiles').delete().eq('user_id', user.id),
       ])
 
-      // Delete the user account (requires admin privileges or service role key)
-      // For now, we'll just sign out - actual deletion should be handled by an admin endpoint
+      // Note: Actual user account deletion from auth.users requires service role key
+      // For now, we sign out after deleting user data
+      // In production, implement an admin API endpoint to delete the auth user
       await supabase.auth.signOut()
     },
   })

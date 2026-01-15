@@ -33,6 +33,9 @@ export function CheckInForm() {
       })
 
       toast.success('Check-in saved!')
+      // Reset form to defaults
+      setMood(3)
+      setEnergy(3)
       setNote('')
     } catch (error) {
       logError(error as Error, { context: 'check-in-form' })
