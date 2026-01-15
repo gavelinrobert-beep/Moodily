@@ -75,6 +75,8 @@ CREATE TRIGGER update_profiles_updated_at
   EXECUTE FUNCTION update_updated_at_column();
 
 -- Create streak view using gaps-and-islands technique
+-- Note: This view calculates streaks using UTC dates. For timezone-aware streaks,
+-- the application should filter/adjust dates on the client side or in queries
 CREATE OR REPLACE VIEW user_streaks AS
 WITH daily_entries AS (
   SELECT DISTINCT

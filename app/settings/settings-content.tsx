@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useProfile, useUpdateProfile, useDeleteAccount } from '@/lib/hooks/use-profile'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -17,12 +17,12 @@ export function SettingsContent() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
   // Update state when profile loads
-  useState(() => {
+  useEffect(() => {
     if (profile) {
       setNotificationPref(profile.notification_pref)
       setPausedUntil(profile.paused_until || '')
     }
-  })
+  }, [profile])
 
   const handleSaveSettings = async () => {
     try {
