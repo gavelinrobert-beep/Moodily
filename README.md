@@ -22,6 +22,7 @@ A simple, privacy-focused app for tracking your daily mood and energy levels. Bu
 - Timezone configuration
 - Email reminder preferences
 - Pause/snooze reminders
+- Data export (CSV/JSON)
 - Full data control
 
 📧 **Reminders**
@@ -246,7 +247,6 @@ Events tracked:
 
 Future enhancements (not in MVP):
 - [ ] Push notifications
-- [ ] Data export (CSV/JSON)
 - [ ] Custom reminder times per user
 - [ ] Mood pattern insights
 - [ ] Multi-language support

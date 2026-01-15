@@ -26,6 +26,8 @@ export default function SettingsClient({ user, profile }: SettingsClientProps) {
   const [pausedUntil, setPausedUntil] = useState(profile?.paused_until || '')
   const [loading, setLoading] = useState(false)
   const [deleteConfirm, setDeleteConfirm] = useState('')
+  const [exportFormat, setExportFormat] = useState<'json' | 'csv'>('json')
+  const [exporting, setExporting] = useState(false)
   const router = useRouter()
   const supabase = createClient()
 
@@ -54,6 +56,54 @@ export default function SettingsClient({ user, profile }: SettingsClientProps) {
       console.error(error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleExport = async () => {
+    setExporting(true)
+    try {
+      const response = await fetch(`/api/export?format=${exportFormat}`)
+      
+      if (response.status === 401) {
+        toast.error('Please sign in again to export your data')
+        router.push('/auth/signin')
+        return
+      }
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || 'Export failed')
+      }
+
+      // Get the filename from Content-Disposition header or use a default
+      const contentDisposition = response.headers.get('Content-Disposition')
+      let filename = `moodily-export-${new Date().toISOString().split('T')[0]}.${exportFormat}`
+      
+      if (contentDisposition) {
+        const filenameMatch = contentDisposition.match(/filename="?(.+)"?/)
+        if (filenameMatch) {
+          filename = filenameMatch[1]
+        }
+      }
+
+      // Create blob and download
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = filename
+      document.body.appendChild(a)
+      a.click()
+      window.URL.revokeObjectURL(url)
+      document.body.removeChild(a)
+
+      toast.success('Data exported successfully!')
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to export data'
+      toast.error(errorMessage)
+      console.error(error)
+    } finally {
+      setExporting(false)
     }
   }
 
@@ -206,6 +256,61 @@ export default function SettingsClient({ user, profile }: SettingsClientProps) {
             {loading ? 'Saving...' : 'Save Settings'}
           </button>
         </form>
+
+        {/* Export Data */}
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 mb-6">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+            Export My Data
+          </h2>
+          <p className="text-gray-700 dark:text-gray-300 mb-4">
+            Download all your mood entries and profile information. You can choose between CSV
+            (entries only) or JSON (entries + profile) format.
+          </p>
+          
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Export Format
+            </label>
+            <div className="space-y-2">
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="exportFormat"
+                  value="json"
+                  checked={exportFormat === 'json'}
+                  onChange={(e) => setExportFormat(e.target.value as 'json' | 'csv')}
+                  className="mr-2"
+                  aria-label="Export as JSON"
+                />
+                <span className="text-gray-700 dark:text-gray-300">
+                  <strong>JSON</strong> - Complete data including profile and entries
+                </span>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="radio"
+                  name="exportFormat"
+                  value="csv"
+                  checked={exportFormat === 'csv'}
+                  onChange={(e) => setExportFormat(e.target.value as 'json' | 'csv')}
+                  className="mr-2"
+                  aria-label="Export as CSV"
+                />
+                <span className="text-gray-700 dark:text-gray-300">
+                  <strong>CSV</strong> - Entries only (mood, energy, note, date, id)
+                </span>
+              </label>
+            </div>
+          </div>
+
+          <button
+            onClick={handleExport}
+            disabled={exporting}
+            className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200"
+          >
+            {exporting ? 'Exporting...' : `Export as ${exportFormat.toUpperCase()}`}
+          </button>
+        </div>
 
         {/* Delete Account */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
