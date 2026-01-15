@@ -64,8 +64,15 @@ export default function SettingsClient({ user, profile }: SettingsClientProps) {
     try {
       const response = await fetch(`/api/export?format=${exportFormat}`)
       
+      if (response.status === 401) {
+        toast.error('Please sign in again to export your data')
+        router.push('/auth/signin')
+        return
+      }
+
       if (!response.ok) {
-        throw new Error('Export failed')
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || 'Export failed')
       }
 
       // Get the filename from Content-Disposition header or use a default
@@ -92,7 +99,8 @@ export default function SettingsClient({ user, profile }: SettingsClientProps) {
 
       toast.success('Data exported successfully!')
     } catch (error) {
-      toast.error('Failed to export data')
+      const errorMessage = error instanceof Error ? error.message : 'Failed to export data'
+      toast.error(errorMessage)
       console.error(error)
     } finally {
       setExporting(false)

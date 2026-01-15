@@ -56,7 +56,17 @@ export async function GET(request: Request) {
         'id,mood,energy,note,created_at',
         // Data rows
         ...(entries || []).map((entry) => {
-          const note = entry.note ? `"${entry.note.replace(/"/g, '""')}"` : ''
+          // Sanitize note to prevent CSV injection
+          let note = ''
+          if (entry.note) {
+            // Remove potential formula injection characters at the start
+            let sanitizedNote = entry.note.trim()
+            if (/^[=+\-@]/.test(sanitizedNote)) {
+              sanitizedNote = "'" + sanitizedNote
+            }
+            // Escape quotes for CSV
+            note = `"${sanitizedNote.replace(/"/g, '""')}"`
+          }
           return `${entry.id},${entry.mood},${entry.energy},${note},${entry.created_at}`
         }),
       ]
