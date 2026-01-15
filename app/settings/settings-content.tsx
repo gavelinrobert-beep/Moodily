@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useProfile, useUpdateProfile, useDeleteAccount } from '@/lib/hooks/use-profile'
-import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import toast from 'react-hot-toast'
@@ -10,7 +9,6 @@ import { getUserTimezone } from '@/lib/utils/date'
 
 export function SettingsContent() {
   const router = useRouter()
-  const supabase = createClient()
   const { data: profile, isLoading } = useProfile()
   const updateProfile = useUpdateProfile()
   const deleteAccount = useDeleteAccount()
@@ -34,7 +32,7 @@ export function SettingsContent() {
         timezone: getUserTimezone(),
       })
       toast.success('Settings saved!')
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to save settings')
     }
   }
@@ -44,7 +42,7 @@ export function SettingsContent() {
       await deleteAccount.mutateAsync()
       toast.success('Account deleted')
       router.push('/auth/sign-in')
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to delete account')
     }
   }

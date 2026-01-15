@@ -1,5 +1,5 @@
 import { format, parseISO, startOfWeek, endOfWeek, subWeeks, startOfDay, endOfDay } from 'date-fns'
-import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz'
+import { utcToZonedTime } from 'date-fns-tz'
 
 export function getUserTimezone(): string {
   return Intl.DateTimeFormat().resolvedOptions().timeZone

@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { trackEvent } from '@/lib/utils/analytics'
 import { logError } from '@/lib/utils/error-logger'
@@ -11,7 +10,6 @@ export default function SignInPage() {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [emailSent, setEmailSent] = useState(false)
-  const router = useRouter()
   const supabase = createClient()
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -99,7 +97,7 @@ export default function SignInPage() {
 
         <div className="mt-6 text-center text-sm text-gray-600">
           <p>
-            We'll send you a magic link for a password-free sign in.
+            We&apos;ll send you a magic link for a password-free sign in.
           </p>
         </div>
       </div>
