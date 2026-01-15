@@ -49,8 +49,8 @@ export default function WeeklyTrend({ entries }: WeeklyTrendProps) {
 
   useEffect(() => {
     // Track chart view event
-    if (typeof window !== 'undefined' && (window as any).trackEvent) {
-      (window as any).trackEvent('chart_view', { chart_type: 'weekly_trend' })
+    if (typeof window !== 'undefined' && window.trackEvent) {
+      window.trackEvent('chart_view', { chart_type: 'weekly_trend' })
     }
   }, [])
 

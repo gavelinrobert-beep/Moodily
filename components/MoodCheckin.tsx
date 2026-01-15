@@ -65,8 +65,8 @@ export default function MoodCheckin({ onSuccess }: MoodCheckinProps) {
         toast.success('Entry saved!')
         
         // Track check-in event
-        if (typeof window !== 'undefined' && (window as any).trackEvent) {
-          (window as any).trackEvent('check_in', { mood, energy })
+        if (typeof window !== 'undefined' && window.trackEvent) {
+          window.trackEvent('check_in', { mood, energy })
         }
 
         // Reset form

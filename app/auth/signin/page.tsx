@@ -28,8 +28,8 @@ export default function SignInPage() {
         setSent(true)
         toast.success('Check your email for the magic link!')
         // Track sign up event
-        if (typeof window !== 'undefined' && (window as any).trackEvent) {
-          (window as any).trackEvent('sign_up', { method: 'magic_link' })
+        if (typeof window !== 'undefined' && window.trackEvent) {
+          window.trackEvent('sign_up', { method: 'magic_link' })
         }
       }
     } catch (error) {

@@ -87,16 +87,18 @@ streaks AS (
   GROUP BY user_id, grp
 )
 SELECT
-  user_id,
-  streak_start,
-  streak_end,
-  streak_length,
+  s.user_id,
+  s.streak_start,
+  s.streak_end,
+  s.streak_length,
   CASE 
-    WHEN streak_end = CURRENT_DATE THEN TRUE
-    WHEN streak_end = CURRENT_DATE - INTERVAL '1 day' THEN TRUE
+    -- Check if streak end is today or yesterday in user's timezone
+    WHEN s.streak_end = DATE(NOW() AT TIME ZONE COALESCE(p.timezone, 'UTC')) THEN TRUE
+    WHEN s.streak_end = DATE(NOW() AT TIME ZONE COALESCE(p.timezone, 'UTC')) - INTERVAL '1 day' THEN TRUE
     ELSE FALSE
   END AS is_current_streak
-FROM streaks;
+FROM streaks s
+LEFT JOIN profiles p ON s.user_id = p.user_id;
 
 -- Function to get current streak for a user
 CREATE OR REPLACE FUNCTION get_current_streak(p_user_id UUID)

@@ -25,8 +25,8 @@ export default function StreakBadge() {
           setStreak(data || 0)
           
           // Track streak length event
-          if (data > 0 && typeof window !== 'undefined' && (window as any).trackEvent) {
-            (window as any).trackEvent('streak_length', { days: data })
+          if (data > 0 && typeof window !== 'undefined' && window.trackEvent) {
+            window.trackEvent('streak_length', { days: data })
           }
         }
       } catch (error) {

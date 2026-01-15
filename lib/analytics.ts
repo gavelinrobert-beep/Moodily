@@ -1,12 +1,21 @@
+// Extend Window interface for analytics
+declare global {
+  interface Window {
+    trackEvent?: (eventName: string, properties?: Record<string, any>) => void
+    plausible?: (eventName: string, options?: { props?: Record<string, any> }) => void
+    gtag?: (...args: any[]) => void
+    posthog?: {
+      capture: (eventName: string, properties?: Record<string, any>) => void
+    }
+  }
+}
+
 // Simple analytics tracking
 export const trackEvent = (
   eventName: string,
   properties?: Record<string, any>
 ) => {
   if (typeof window === 'undefined') return
-
-  // Store event in window for access by analytics providers
-  ;(window as any).trackEvent = (window as any).trackEvent || (() => {})
 
   // Log to console in development
   if (process.env.NODE_ENV === 'development') {
@@ -21,8 +30,8 @@ export const trackEvent = (
   
   // For now, just log it
   try {
-    if ((window as any).plausible) {
-      (window as any).plausible(eventName, { props: properties })
+    if (window.plausible) {
+      window.plausible(eventName, { props: properties })
     }
   } catch (error) {
     console.error('Analytics error:', error)
